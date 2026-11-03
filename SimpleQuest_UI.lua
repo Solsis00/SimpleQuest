@@ -8,6 +8,7 @@ local addonName, SS = ...
 -- ============================================================================
 SS_CheckboxHideAll = nil
 SS_CheckboxAutoTrack = nil
+SS_CheckboxAutoAccept = nil
 SS_ButtonSortMode = nil
 SS_UIFrame = nil
 
@@ -100,7 +101,25 @@ function SS_CreateUI()
     autoCheckbox:SetScript("OnClick", function()
         SS_ToggleAutoTrackZone()
     end)
-    
+
+    yOffset = yOffset - 28
+
+    -- "Auto-Accept Quests" checkbox
+    local acceptCheckbox = CreateFrame("CheckButton", nil, frame)
+    acceptCheckbox:SetPoint("LEFT", 12, yOffset)
+    acceptCheckbox:SetSize(24, 24)
+    SS_CheckboxAutoAccept = acceptCheckbox
+
+    local acceptLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontWhite")
+    acceptLabel:SetPoint("LEFT", acceptCheckbox, "RIGHT", 4, 0)
+    acceptLabel:SetText("Auto-Accept Quests")
+    acceptLabel:SetFontObject("GameFontWhite")
+    acceptLabel:SetSize(150, 16)
+
+    acceptCheckbox:SetScript("OnClick", function()
+        SS_ToggleAutoAccept()
+    end)
+
     yOffset = yOffset - 28
     
     -- Separator line
@@ -247,6 +266,7 @@ function SS_CreateUI()
     -- Set initial checkbox states
     hideCheckbox:SetChecked(SS.Settings.hideAllTracked)
     autoCheckbox:SetChecked(SS.Settings.autoTrackZone)
+    SS_CheckboxAutoAccept:SetChecked(SS.Settings.autoAccept)
     
     -- Update button text based on current sort mode
     if SS.Settings.sortMode == "recent" then

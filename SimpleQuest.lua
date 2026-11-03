@@ -11,6 +11,7 @@ SS.Settings = SS_Settings or {
     autoTrackZone = true,            -- Auto-track quests relevant to current zone
     sortMode = "recent",             -- "recent" or "distance"
     sortOrder = "desc",              -- "desc" = newest/closest first
+    autoAccept = true,              -- Auto-accept quests from NPCs
     hasWelcomed = false,             -- Whether welcome message has been shown
 }
 
@@ -63,7 +64,6 @@ function SS_OnEvent(event, arg1)
     -- Quest gained / completed
     if event == "QUEST_ACCEPTED" then
         SS_OnQuestAccepted(arg1)
-    -- elseif event == "QUEST_COMPLETE" then
     elseif event == "QUEST_TURNED_IN" then
         SS_OnQuestComplete(arg1)
     end
@@ -129,6 +129,13 @@ function SS_OnPlayerEnteredWorld()
 
     -- Do initial zone scan
     SS_OnZoneChanged()
+
+    -- Hook into the QuestFrame to detect when a quest is offered
+    if QuestFrame then
+        QuestFrame:HookScript("OnShow", function()
+            SS_AutoAcceptQuest()
+        end)
+    end
 end
 
 -- ============================================================================
@@ -703,6 +710,23 @@ function SS_GetActiveQuests()
 end
 
 -- ============================================================================
+-- Auto-Accept Logic
+-- ============================================================================
+function SS_AutoAcceptQuest()
+    if not SS.Settings.autoAccept then return end
+
+    -- Disable if Shift is held
+    if IsShiftKeyDown() then
+        return
+    end
+
+    -- Ensure QuestFrame is visible before attempting to accept
+    if QuestFrame and QuestFrame:IsVisible() then
+        AcceptQuest()
+    end
+end
+
+-- ============================================================================
 -- Toggle Functions (called by UI)
 -- ============================================================================
 function SS_ToggleHideAllTracked()
@@ -734,6 +758,20 @@ function SS_ToggleAutoTrackZone()
     
     if SS_CheckboxAutoTrack then
         SS_CheckboxAutoTrack:SetChecked(SS.Settings.autoTrackZone)
+    end
+end
+
+function SS_ToggleAutoAccept()
+    SS.Settings.autoAccept = not SS.Settings.autoAccept
+    
+    if SS.Settings.autoAccept then
+        SS_PrintChat("|cff3fcf7fSimpleQuest|r: Auto-accept quests ENABLED (Hold Shift to disable).")
+    else
+        SS_PrintChat("|cff3fcf7fSimpleQuest|r: Auto-accept quests DISABLED.")
+    end
+    
+    if SS_CheckboxAutoAccept then
+        SS_CheckboxAutoAccept:SetChecked(SS.Settings.autoAccept)
     end
 end
 
