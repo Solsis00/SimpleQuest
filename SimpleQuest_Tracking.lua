@@ -78,7 +78,7 @@ function SS_SmartAutoTrack()
                 -- Get quest name via the supported title API (wrapped in pcall)
                 local nameSuccess, questTitle = pcall(C_QuestLog.GetTitleForQuestID, questId)
                 local questName = nameSuccess and questTitle or tostring(questId)
-                SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Tracked \"%s\" in %s.", questName, zoneName))
+                --SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Tracked \"%s\" in %s.", questName, zoneName))
             end
         end
     end

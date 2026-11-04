@@ -2,6 +2,8 @@
 -- Handles settings, events, and utility functions
 
 local addonName, SS = ...
+local version = "v0.5"
+local addonloaded = false
 
 -- ============================================================================
 -- Default Settings
@@ -59,6 +61,7 @@ function SS_OnEvent(event, arg1)
     -- Load saved variables when addon loads
     if event == "ADDON_LOADED" and arg1 == addonName then
         SS_SettingsLoaded()
+        addonloaded = true
         return
     end
 
@@ -118,7 +121,7 @@ function SS_OnPlayerEnteredWorld()
 
     -- Welcome message (first load only, or after reload)
     if not SS.Settings.hasWelcomed then
-        SS_PrintChat("|cff3fcf7fSimpleQuest|r: Addon loaded successfully! Type /sq for help.")
+        SS_PrintChat("|cff3fcf7fSimpleQuest|r: Addon loaded successfully! "..version.."|cff3fcf7f|r Type /sq for help.")
         SS.Settings.hasWelcomed = true
     end
 
@@ -161,11 +164,11 @@ function SS_ScanExistingQuests()
     if foundCount == 0 then
         foundCount = SS_ScanQuestTrackerFrames()
     end
-
+--[[ 
     if foundCount > 0 then
         SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Found %d existing quests in log.", foundCount))
     end
-
+ ]]
     return foundCount
 end
 
@@ -268,7 +271,7 @@ function SS_OnQuestAccepted(questId)
                 -- Get quest name via the supported title API (wrapped in pcall)
                 local nameSuccess, questTitle = pcall(C_QuestLog.GetTitleForQuestID, questId)
                 local questName = nameSuccess and questTitle or tostring(questId)
-                SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Auto-tracked quest %s.", questName))
+                --SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Auto-tracked quest %s.", questName))
             end
         end)
     end
@@ -309,6 +312,7 @@ end
 -- Zone Change Handler
 -- ============================================================================
 function SS_OnZoneChanged()
+    if not addonloaded then return end
     local zoneName = SS_GetCurrentZone()
     
     -- Only re-process if zone actually changed
@@ -501,9 +505,9 @@ function SS_AutoTrackZoneQuests(zoneName)
         end
     end
     
-    if trackedCount > 0 then
+    --[[if trackedCount > 0 then
         SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Tracked %d quest(s) in %s.", trackedCount, zoneName))
-    end
+    end]]
 end
 
 function SS_AutoTrackNextInZone()
@@ -517,7 +521,7 @@ function SS_AutoTrackNextInZone()
         if entry and entry.questId and not entry.isTracked then
             if SS_QuestIsInZone(entry.questId, zoneName, i) then
                 SS_TrackQuestByID(entry.questId)
-                SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Auto-tracked next quest: %s.", entry.title))
+                --SS_PrintChat(string.format("|cff3fcf7fSimpleQuest|r: Auto-tracked next quest: %s.", entry.title))
                 return
             end
         end
