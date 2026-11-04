@@ -17,4 +17,5 @@
 SimpleQuest.lua
 SimpleQuest_Tracking.lua
 SimpleQuest_Sorting.lua
+SimpleQuest_TurnIn.lua
 SimpleQuest_UI.lua

@@ -12,6 +12,7 @@ SS.Settings = SS_Settings or {
     sortMode = "recent",             -- "recent" or "distance"
     sortOrder = "desc",              -- "desc" = newest/closest first
     autoAccept = true,              -- Auto-accept quests from NPCs
+    autoTurnIn = true,               -- Auto turn-in completed quests at NPCs
     hasWelcomed = false,             -- Whether welcome message has been shown
 }
 

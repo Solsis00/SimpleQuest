@@ -228,6 +228,8 @@ function SS_HandleChatCommand(argString)
         else
             SS_PrintChat("|cff3fcf7fSimpleQuest|r: Auto-track DISABLED.")
         end
+    elseif command == "turnin" or command == "ti" then
+        SS_ToggleAutoTurnIn()
     elseif command == "sort" then
         SS_ToggleSortMode()
     elseif command == "status" or command == "info" then
@@ -243,6 +245,7 @@ function SS_PrintStatus()
     SS_PrintChat("|cff3fcf7fSimpleQuest|r: --- Status ---")
     SS_PrintChat(string.format("  Hide All Tracked: %s", SS.Settings.hideAllTracked and "ON" or "OFF"))
     SS_PrintChat(string.format("  Auto-Track Zone: %s", SS.Settings.autoTrackZone and "ON" or "OFF"))
+    SS_PrintChat(string.format("  Auto Turn-In: %s", SS.Settings.autoTurnIn and "ON" or "OFF"))
     SS_PrintChat(string.format("  Sort Mode: %s", SS.Settings.sortMode))
     SS_PrintChat(string.format("  Sort Order: %s", SS.Settings.sortOrder))
     
@@ -265,5 +268,6 @@ function SS_PrintHelp()
     SS_PrintChat("  /sq hide          - Hide all tracked quests")
     SS_PrintChat("  /sq show          - Show all tracked quests")
     SS_PrintChat("  /sq autotrack     - Toggle auto-track zone quests")
+    SS_PrintChat("  /sq turnin        - Toggle auto turn-in of completed quests")
     SS_PrintChat("  /sq sort          - Toggle sort mode (recent/distance)")
 end
