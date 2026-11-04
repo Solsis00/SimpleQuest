@@ -34,14 +34,52 @@ end
 -- Step 1a: Gossip NPCs (modern dialogue frame)
 -- ============================================================================
 local function SS_TurnIn_OnGossipShow()
-    local activeQuests = C_GossipInfo.GetActiveQuests()
-    if not activeQuests then return end
+    print("|cff3fcf7fSimpleQuest|r: [DEBUG] GOSSIP_SHOW event fired.")
 
-    for _, info in ipairs(activeQuests) do
-        if info.isComplete and info.questID then
-            C_GossipInfo.SelectActiveQuest(info.questID)
+    -- 1. Handle completed quests (turn-in)
+    local activeQuests = C_GossipInfo.GetActiveQuests()
+    if activeQuests then
+        print("|cff3fcf7fSimpleQuest|r: [DEBUG] Checking active quests...")
+        for _, info in ipairs(activeQuests) do
+            if info.isComplete and info.questID then
+                print(string.format("|cff3fcf7fSimpleQuest|r: [DEBUG] Found complete quest ID: %s. Selecting...", tostring(info.questID)))
+                C_GossipInfo.SelectActiveQuest(info.questID)
+                return
+            end
+        end
+    end
+
+    -- 2. Handle offered quests (final acceptance stage)
+    local availableQuests = C_GossipInfo.GetAvailableQuests()
+    if availableQuests and #availableQuests > 0 then
+        print(string.format("|cff3fcf7fSimpleQuest|r: [DEBUG] Found %d available quests. Selecting first...", #availableQuests))
+        C_GossipInfo.SelectAvailableQuest(1)
+        return
+    end
+
+    -- 3. Handle dialogue/quest progression (e.g., "(Quest) <Stay awhile and listen.>")
+    local options = C_GossipInfo.GetOptions()
+    if options then
+        print(string.format("|cff3fcf7fSimpleQuest|r: [DEBUG] Checking %d gossip options...", #options))
+        
+        -- Case A: Only one option exists. It's almost certainly the quest dialogue.
+        if #options == 1 then
+            print("|cff3fcf7fSimpleQuest|r: [DEBUG] Single option detected. Selecting...")
+            C_GossipInfo.SelectOption(options[1].gossipOptionID)
             return
         end
+
+        -- Case B: Multiple options. Look for the one with a 'rewards' table or 'quest' text.
+        for _, option in ipairs(options) do
+            local optionText = option.text or option.name or ""
+            if (option.rewards and type(option.rewards) == "table") or string.find(optionText:lower(), "quest") then
+                print(string.format("|cff3fcf7fSimpleQuest|r: [DEBUG] Found quest option! Selecting ID: %s", tostring(option.gossipOptionID)))
+                C_GossipInfo.SelectOption(option.gossipOptionID)
+                return
+            end
+        end
+    else
+        print("|cff3fcf7fSimpleQuest|r: [DEBUG] No options found via C_GossipInfo.GetOptions().")
     end
 end
 
@@ -69,7 +107,7 @@ local function SS_TurnIn_OnQuestGreeting()
     end
 end
 
--- ============================================================================
+-- =================================n============================================
 -- Step 2: Progress panel ("Continue" button)
 -- ============================================================================
 local function SS_TurnIn_OnQuestProgress()
@@ -129,4 +167,3 @@ function SS_ToggleAutoTurnIn()
         SS_CheckboxAutoTurnIn:SetChecked(SS.Settings.autoTurnIn)
     end
 end
-
