@@ -1,4 +1,4 @@
-## Interface: 120105
+## Interface: 16001,120105
 ## Title: |cff3fcf7fSimpleQuest|r
 ## Notes: Smart quest helper - auto-track, sort, and manage your quest log.
 ## Author: You

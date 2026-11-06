@@ -2,7 +2,7 @@
 -- Handles settings, events, and utility functions
 
 local addonName, SS = ...
-local version = "v0.5"
+local version = "v0.6"
 local addonloaded = false
 
 -- ============================================================================
@@ -134,12 +134,9 @@ function SS_OnPlayerEnteredWorld()
     -- Do initial zone scan
     SS_OnZoneChanged()
 
-    -- Hook into the QuestFrame to detect when a quest is offered
-    if QuestFrame then
-        QuestFrame:HookScript("OnShow", function()
-            SS_AutoAcceptQuest()
-        end)
-    end
+    -- Auto-accept is driven by QUEST_DETAIL in SimpleQuest_TurnIn.lua (deferred
+    -- action queue). The old QuestFrame OnShow hook fired AcceptQuest() on any
+    -- quest panel (greeting/progress/reward), which could break NPC dialogue.
 end
 
 -- ============================================================================
@@ -725,8 +722,8 @@ function SS_AutoAcceptQuest()
         return
     end
 
-    -- Ensure QuestFrame is visible before attempting to accept
-    if QuestFrame and QuestFrame:IsVisible() then
+    -- Ensure the quest detail panel is actively shown before attempting to accept
+    if QuestFrame and QuestFrame:IsShown() and (not QuestFrameDetailPanel or QuestFrameDetailPanel:IsShown()) then
         AcceptQuest()
     end
 end

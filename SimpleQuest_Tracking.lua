@@ -230,6 +230,10 @@ function SS_HandleChatCommand(argString)
         end
     elseif command == "turnin" or command == "ti" then
         SS_ToggleAutoTurnIn()
+    elseif command == "debug" then
+        if SS_ToggleDebugTurnIn then
+            SS_ToggleDebugTurnIn()
+        end
     elseif command == "sort" then
         SS_ToggleSortMode()
     elseif command == "status" or command == "info" then
